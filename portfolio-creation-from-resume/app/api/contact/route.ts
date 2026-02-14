@@ -1,38 +1,43 @@
-import { NextResponse } from "next/server"
+import { NextResponse } from "next/server";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(request: Request) {
   try {
-    const { name, email, message } = await request.json()
+    const { name, email, message } = await request.json();
 
-    // Basic validation
+    // validation
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: "All fields are required" },
         { status: 400 }
-      )
+      );
     }
 
-    // Email format validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      )
-    }
-
-    // For now, log the contact form submission
-    // In production, you could integrate with an email service like Resend, SendGrid, etc.
-    console.log("Contact form submission:", { name, email, message })
+    // send email
+    await resend.emails.send({
+      from: "Portfolio Contact <onboarding@resend.dev>",
+      to: ["gaddetejesh@gmail.com"], // your email
+      subject: "New message from portfolio",
+      html: `
+        <h3>New Contact Message</h3>
+        <p><b>Name:</b> ${name}</p>
+        <p><b>Email:</b> ${email}</p>
+        <p><b>Message:</b> ${message}</p>
+      `,
+    });
 
     return NextResponse.json(
-      { message: "Message received successfully!" },
+      { message: "Email sent successfully!" },
       { status: 200 }
-    )
-  } catch {
+    );
+
+  } catch (error) {
+    console.error(error);
     return NextResponse.json(
-      { error: "Something went wrong" },
+      { error: "Failed to send email" },
       { status: 500 }
-    )
+    );
   }
 }
