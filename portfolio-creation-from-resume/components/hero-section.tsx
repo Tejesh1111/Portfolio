@@ -56,7 +56,7 @@ export function HeroSection() {
         <div className="shrink-0">
           <div className="relative h-44 w-44 overflow-hidden rounded-full border-2 border-primary/30 md:h-52 md:w-52">
             <Image
-              src="/images/profile.jpeg"
+              src="/tejeshimage.jpeg"
               alt="Gadde Tejesh"
               fill
               className="object-cover object-top"
